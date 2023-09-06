@@ -32,3 +32,75 @@ def load_str(resorted):
 
     for state_status in resorted:
         state = state_status.get('state', '')
+
+        if state == 'EXECUTED':
+            five_str_load.append(state_status)
+            count += 1
+
+        if count == 5:
+            break
+    return five_str_load
+
+
+five_list = load_str(sorted_data)
+
+# создаем 2 списка для записи в них наименования банка и наименоваие счета
+numb_bank = [] # имя банка
+numb_kart = [] # имя счета
+
+
+def function_five_load(an):
+    '''функция извлекает все статусы из списка и разделяет
+    далее через сплит разделяет по пробелу все значения и записывает их в новые списки'''
+
+    for r in an:
+        from_1 = r.get('from', '')
+        w = from_1.split(' ')
+
+        numb_bank.append(' '.join(w[:-1]))
+        numb_kart.append(''.join(w[-1]))
+    print(numb_bank)
+    print(numb_kart)
+    return numb_bank, numb_kart
+
+
+numb_bank, numb_kart = function_five_load(five_list)
+
+# создаем пустой список, чтобы добавить звездочки, вместе символов
+
+replay_numb_kart = []
+
+
+def stars_numb(q):
+    '''функция для преобразования некоторых чисел в звездочки
+    и записи их в новый список'''
+    for o in q:
+        stars = len(o) - 10
+
+        replay_numb_kart.append(o[:6] + "*" * stars + o[-4:])
+    return replay_numb_kart
+
+
+numb_kart = stars_numb(numb_kart)
+
+result_strings = []
+
+for string in numb_kart:
+    for i in range(0, len(string), 4):
+        formatted_string = ' '.join([string[i:i + 4] for i in range(0, len(string), 4)])
+        result_strings.append(formatted_string)
+
+
+
+
+for list_bank, s, list_numb in zip(numb_bank, five_str_load, result_strings):
+    data_operation = s['date']
+    description = s['description']
+    name = s['operationAmount']['currency']['name']
+    summ_operation = s['operationAmount']['amount']
+    date = s['date']
+    to = s['to'][:-14].replace('Счет ', '')
+    print(f'{date[:10].replace("-", ".")} {description}\n'
+          f'{list_bank} {list_numb} -> Счет **{to[2:]}\n'
+          f'{summ_operation} {name}\n')
+
